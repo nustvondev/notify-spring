@@ -1,0 +1,52 @@
+spring:
+  application:
+    name: notification-service
+  threads:
+    virtual:
+      enabled: ${ENABLED_VIRTUAL_THREAD:true}
+
+management:
+  health:
+    defaults:
+      enabled: false
+  server:
+    port: ${MANAGEMENT_SERVER_PORT:8080}
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include:
+          - prometheus
+          - health
+          - metrics
+      path-mapping:
+        health: /actuator/health
+        prometheus: /actuator/prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-components: always
+  metrics:
+    distribution:
+      percentiles-histogram:
+        "http.server.requests": true
+      percentiles:
+        "http.server.requests": 0.5, 0.90, 0.95, 0.99
+
+server:
+  servlet:
+    context-path: /api/notification-service
+
+application:
+  migration-app-notification-enable: true
+  max-length-payload-log: 1000
+
+logging:
+  level:
+    root: INFO
+    feign: INFO
+    com:
+      finx: ${APPLICATION_LOG_LEVEL:INFO}

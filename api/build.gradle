@@ -1,0 +1,20 @@
+plugins {
+    id 'application'
+}
+
+
+application {
+    mainClass = 'vn.com.notification.api.NotificationApiApplication'
+}
+
+dependencies {
+    implementation project(':core')
+    implementation project(':infra')
+    implementation project(':common')
+
+}
+
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,9 @@
+dependencies {
+//    implementation project(':core')
+}
+
+//test {
+//    // Temporarily disabled test cases.
+//    exclude '**/'
+//    useJUnitPlatform()
+//}

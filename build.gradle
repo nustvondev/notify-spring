@@ -1,0 +1,123 @@
+// Thiết lập phần buildscript: định nghĩa các plugin và dependency cần thiết cho quá trình build
+buildscript {
+    repositories {
+        mavenCentral() // Dùng Maven Central làm nguồn lấy thư viện
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:3.4.3")  // Plugin Gradle của Spring Boot
+        classpath "io.spring.gradle:dependency-management-plugin:1.1.7"
+        // Plugin quản lý dependency theo kiểu Maven BOM
+        classpath("com.diffplug.spotless:spotless-plugin-gradle:7.0.2")
+        // Plugin dùng để định dạng và kiểm tra code Java
+    }
+}
+
+// Khai báo các plugin cấp độ dự án cha
+plugins {
+    id 'java' // Hỗ trợ build Java project
+    id 'com.diffplug.spotless' version '7.0.2' // Dùng plugin Spotless để format code
+}
+
+// Cấu hình repository dùng cho tất cả project
+repositories {
+    mavenCentral()
+}
+
+// Cấu hình chung áp dụng cho tất cả subproject
+allprojects {
+    group = 'vn.com.notification' // Tên group cho artifact
+    version = '0.0.1-SNAPSHOT' // Phiên bản của artifact
+    // Biến cấu hình phiên bản Spring Cloud dùng chung
+    ext {
+        set('springCloudVersion', "2024.0.0")
+    }
+
+    // Cấu hình compiler cho Java: dùng MapStruct và hiển thị cảnh báo deprecation
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.compilerArgs += [
+                    '-Amapstruct.unmappedTargetPolicy=IGNORE',
+                    "-Xlint:deprecation"
+            ]
+        }
+    }
+
+    // Đảm bảo rằng sau khi compile Java sẽ thực thi spotlessApply để format code
+    tasks.withType(JavaCompile).configureEach {
+        finalizedBy('spotlessApply')
+    }
+}
+
+// Cấu hình áp dụng cho tất cả subproject
+subprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'com.diffplug.spotless'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
+    }
+
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+    bootJar {
+        enabled = project.name == 'api'
+        if (enabled) {
+            mainClass = 'vn.com.notification.api.NotificationApiApplication'
+        }
+    }
+
+    // Loại bỏ một số dependency logging mặc định của Spring Boot để sử dụng log4j2
+    configurations {
+        configureEach {
+            exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+            exclude group: 'ch.qos.logback', module: 'logback-classic'
+            exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
+        }
+    }
+
+    spotless {
+        java {
+            importOrder() // Sắp xếp thứ tự import
+            removeUnusedImports() // Xoá các import không dùng
+            formatAnnotations() // Format annotation đúng chuẩn
+            googleJavaFormat('1.19.1') // Format theo chuẩn Google Java Format
+            leadingSpacesToTabs(2) // Thay khoảng trắng đầu dòng thành tab (nếu cần)
+            leadingTabsToSpaces (4) // Thay tab đầu dòng thành 4 khoảng trắng
+            endWithNewline() // Đảm bảo file kết thúc bằng dòng trống
+        }
+    }
+
+    // Nhúng BOM của Spring Cloud để đảm bảo version dependency nhất quán
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    // Khai báo các dependency cần thiết cho project
+    dependencies {
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+        implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation'
+        implementation('org.mapstruct:mapstruct:1.5.5.Final')
+        annotationProcessor('org.mapstruct:mapstruct-processor:1.5.5.Final')
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+        implementation 'org.springframework.boot:spring-boot-starter-actuator'
+        implementation 'io.micrometer:micrometer-registry-prometheus'
+        implementation 'commons-io:commons-io:2.6'
+        implementation 'com.auth0:java-jwt:4.3.0'
+    }
+}
