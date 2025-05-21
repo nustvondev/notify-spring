@@ -97,6 +97,10 @@ databaseChangeLog:
               - column:
                   name: read_at
                   type: TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
               - createIndex:
                   tableName: notification
                   columns:
