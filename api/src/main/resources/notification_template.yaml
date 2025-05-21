@@ -1,0 +1,36 @@
+notification:
+  templates:
+    - code: "OTP_LOGIN"
+      title: "Mã xác thực đăng nhập"
+      content: "Mã OTP của bạn là {{otp}}. Vui lòng không chia sẻ với bất kỳ ai."
+      html_content: "<p>Mã OTP đăng nhập: <strong>{{otp}}</strong></p>"
+      sms_content: "OTP đăng nhập: {{otp}}"
+      type: "otp"
+
+    - code: "TXN_SUCCESS"
+      title: "Giao dịch thành công"
+      content: "Bạn vừa thực hiện giao dịch {{amount}} đến tài khoản {{target_account}}."
+      html_content: "<p>Bạn đã chuyển <strong>{{amount}}</strong> đến <strong>{{target_account}}</strong>.</p>"
+      sms_content: "GD: {{amount}} đến {{target_account}} thành công."
+      type: "transaction"
+
+    - code: "BALANCE_UPDATE"
+      title: "Biến động số dư"
+      content: "Tài khoản của bạn vừa {{action}} {{amount}}. Số dư hiện tại: {{balance}}."
+      html_content: "<p>Số dư thay đổi: <strong>{{amount}}</strong> ({{action}}). Số dư mới: {{balance}}</p>"
+      sms_content: "SD: {{amount}} ({{action}}), SD mới: {{balance}}"
+      type: "balance"
+
+    - code: "LOAN_REMINDER"
+      title: "Nhắc thanh toán khoản vay"
+      content: "Bạn cần thanh toán khoản vay {{loan_id}} trước ngày {{due_date}}."
+      html_content: "<p>Vui lòng thanh toán khoản vay <strong>{{loan_id}}</strong> trước <strong>{{due_date}}</strong>.</p>"
+      sms_content: "Nhắc trả nợ {{loan_id}} trước {{due_date}}"
+      type: "reminder"
+
+    - code: "CREDIT_OFFER"
+      title: "Ưu đãi thẻ tín dụng"
+      content: "Mở thẻ tín dụng mới và nhận hoàn tiền đến 2 triệu đồng!"
+      html_content: "<p><strong>Ưu đãi:</strong> Mở thẻ và hoàn đến <strong>2 triệu đồng</strong>!</p>"
+      sms_content: "Mở thẻ, hoàn tiền đến 2 triệu!"
+      type: "promotion"

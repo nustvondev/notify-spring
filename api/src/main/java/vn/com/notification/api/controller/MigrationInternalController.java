@@ -21,7 +21,7 @@ public class MigrationInternalController {
 
     @PostMapping
     public ResponseApi<Void> migrateCloseTD() {
-        taskExecutor.execute(migrationUseCase::migrationCloseTD);
+        taskExecutor.execute(migrationUseCase::migrationNotificationTemplate);
         return ResponseApi.success(null);
     }
 }

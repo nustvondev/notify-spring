@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250905142900_add_meta_column
+      author: hoanh2
+      preConditions:
+        - onFail: MARK_RAN
+          onError: HALT
+          not:
+            columnExists:
+              tableName: notification
+              columnName: meta
+      changes:
+        - addColumn:
+            tableName: notification
+            columns:
+              - column:
+                  name: meta
+                  type: TEXT
+                  remarks: "Additional metadata for the notification"

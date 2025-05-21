@@ -1,0 +1,117 @@
+databaseChangeLog:
+  - changeSet:
+      id: 20250905113500__init_database
+      author: hoanh1
+      changes:
+        - createTable:
+            tableName: notification_template
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: code
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: html_content
+                  type: TEXT
+              - column:
+                  name: sms_content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+        - createTable:
+            tableName: notification
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: template_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: content
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: html_content
+                  type: TEXT
+              - column:
+                  name: sms_content
+                  type: TEXT
+              - column:
+                  name: is_read
+                  type: BOOLEAN
+                  defaultValue: false
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: read_at
+                  type: TIMESTAMP
+              - createIndex:
+                  tableName: notification
+                  columns:
+                    - column:
+                        name: user_id
+                  indexName: idx_notification_user_id
+              - createIndex:
+                  tableName: notification
+                  columns:
+                    - column:
+                        name: template_id
+                  indexName: idx_notification_template_id
+              - createIndex:
+                  tableName: notification
+                  columns:
+                    - column:
+                        name: is_read
+                  indexName: idx_notification_is_read

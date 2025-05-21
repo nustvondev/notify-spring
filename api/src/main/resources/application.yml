@@ -1,6 +1,10 @@
 spring:
   application:
     name: notification-service
+  config:
+    import:
+      - 'database.yml'
+      - 'notification_template.yaml'
   threads:
     virtual:
       enabled: ${ENABLED_VIRTUAL_THREAD:true}
