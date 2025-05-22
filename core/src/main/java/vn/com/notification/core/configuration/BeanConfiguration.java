@@ -37,9 +37,9 @@ public class BeanConfiguration {
 
         return mapper;
     }
+
     @Bean
-    public NotificationProperties notificationProperties(){
+    public NotificationProperties notificationProperties() {
         return new NotificationProperties();
     }
-    
 }

@@ -14,12 +14,12 @@ public class NotificationTemplateServiceImpl implements NotificationTemplateServ
     private final NotificationTemplateRepository notificationTemplateRepository;
     private final NotificationProperties notificationProperties;
 
-    public NotificationTemplateServiceImpl(NotificationTemplateRepository notificationTemplateRepository,
-    NotificationProperties notificationProperties) {
+    public NotificationTemplateServiceImpl(
+            NotificationTemplateRepository notificationTemplateRepository,
+            NotificationProperties notificationProperties) {
         this.notificationProperties = notificationProperties;
         this.notificationTemplateRepository = notificationTemplateRepository;
     }
-
 
     @Override
     public void upsertTemplate() {
