@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/v1/health")
-@RequiredArgsConstructor
 @Slf4j
 public class NotificationCheckHealthController {
 

@@ -18,7 +18,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 @Slf4j
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 @Component
 public class TrackingRequestFilter extends OncePerRequestFilter {
     private static final String HEADERS_STRING_FORMAT = "%s = %s; ";

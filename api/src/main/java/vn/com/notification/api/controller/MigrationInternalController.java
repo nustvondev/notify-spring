@@ -12,13 +12,16 @@ import vn.com.notification.core.usecase.MigrationUseCase;
 
 @RestController
 @RequestMapping("/v1/internal/migration")
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnExpression("${application.migration-app-notification-enable}")
 public class MigrationInternalController {
     private final TaskExecutor taskExecutor;
     private final MigrationUseCase migrationUseCase;
-
+    public MigrationInternalController(TaskExecutor taskExecutor, MigrationUseCase migrationUseCase){
+        this.taskExecutor = taskExecutor;
+        this.migrationUseCase = migrationUseCase;
+    }
     @PostMapping
     public ResponseApi<Void> migrateCloseTD() {
         taskExecutor.execute(migrationUseCase::migrationNotificationTemplate);
