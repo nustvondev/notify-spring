@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Iterator;
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -18,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingResponseWrapper;
 
 @Slf4j
-@RequiredArgsConstructor
+// @RequiredArgsConstructor
 @Component
 public class TrackingRequestFilter extends OncePerRequestFilter {
     private static final String HEADERS_STRING_FORMAT = "%s = %s; ";

@@ -7,7 +7,8 @@
 - [2. Cấu hình Build và Dependencies](#2-cấu-hình-build-và-dependencies)
 - [3. Ưu điểm của Kiến trúc](#3-ưu-điểm-của-kiến-trúc)
 - [4. Quy ước và Tiêu chuẩn](#4-quy-ước-và-tiêu-chuẩn)
-- [5. Cách chạy dự án với docker-compose](#5-cách-chạy-dự-án-với-docker-compose)
+- [5. Quản lý Schema Database với Liquibase](#5-quản-lý-schema-database-với-liquibase)
+- [6. Cách chạy dự án với docker-compose](#6-cách-chạy-dự-án-với-docker-compose)
 
 
 ## Cấu trúc dự án
@@ -121,9 +122,70 @@ Dự án được chia thành 4 module chính:
    - Sử dụng Spring Cloud BOM  
    - Quản lý version tập trung  
 
-## 5. Cách chạy dự án với docker-compose
+## 5. Quản lý Schema Database với Liquibase
 
-### 5.1. Yêu cầu hệ thống
+### 5.1. Cấu trúc Thư mục
+
+```
+api/src/main/resources/db
+├── changelog/
+│   ├── notification-service-schema.yaml  # Schema ban đầu
+│   └── YYYYMMDDHHMMSS_*.yaml            # Các changelog tiếp theo
+└── db.changelog-master.yaml              # File master include các changelog
+```
+
+### 5.2. Quy ước Đặt tên
+
+- File changelog: `YYYYMMDDHHMMSS_mô_tả_ngắn.yaml`
+  - Ví dụ: `20250905142900_add_meta_column.yaml`
+
+### 5.3. Cấu trúc Changelog
+
+- Mỗi changelog file chứa một hoặc nhiều changeSet
+- Mỗi changeSet có:
+  - ID duy nhất (thường là timestamp + mô tả)
+  - Author
+  - Các thay đổi schema (changes)
+  - PreConditions (nếu cần)
+
+Ví dụ:
+```yaml
+databaseChangeLog:
+  - changeSet:
+      id: 20250905142900_add_meta_column
+      author: hoanh2
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            columnExists:
+              tableName: notification
+              columnName: meta
+      changes:
+        - addColumn:
+            tableName: notification
+            columns:
+              - column:
+                  name: meta
+                  type: TEXT
+```
+
+### 5.4. Cấu hình Liquibase
+
+```yaml
+spring:
+  liquibase:
+    change-log: classpath:db/db.changelog-master.yaml
+```
+
+### 5.5. Thực thi Migration
+
+- Migration tự động chạy khi khởi động ứng dụng
+- Liquibase theo dõi các changelog đã chạy trong bảng DATABASECHANGELOG
+- Chỉ chạy các changelog mới chưa được áp dụng
+
+## 6. Cách chạy dự án với docker-compose
+
+### 6.1. Yêu cầu hệ thống
 - Docker Engine
 - Docker Compose
 

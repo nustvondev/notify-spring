@@ -1,3 +1,9 @@
 dependencies {
 //    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor group: 'org.projectlombok', name: 'lombok-mapstruct-binding'
+    implementation('org.mapstruct:mapstruct')
+    annotationProcessor('org.mapstruct:mapstruct-processor')
+
 }

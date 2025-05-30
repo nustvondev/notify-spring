@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    show-sql: true
+    properties:
+      charSet: UTF-8
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        ddl-auto: update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${DATABASE_NAME:notification_db}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+    hikari:
+      minimumIdle: 8
+      maximumPoolSize: 32
+  liquibase:
+    change-log: classpath:db/db.changelog-master.yaml
