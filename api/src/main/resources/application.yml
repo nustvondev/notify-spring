@@ -54,3 +54,27 @@ logging:
     feign: INFO
     com:
       finx: ${APPLICATION_LOG_LEVEL:INFO}
+
+kafka:
+  server: ${KAFKA_PLAINTEXT_SERVERS:localhost:9092}
+  topics:
+    ottMessageLogin: ${KAFKA_OTT_LOGIN:sit.ott.login}
+  producers:
+    - topic: ${KAFKA_OTT_LOGIN:sit.ott.login}
+      ack: ${KAFKA_PRODUCER_ACK_NOTIFICATION:all}
+      enableIdempotence: ${KAFKA_PRODUCER_ENABLE_IDEMPOTENCE_NOTIFICATION:true}
+      retry: ${KAFKA_PRODUCER_RETRY_NOTIFICATION:5}
+      maxInFlightRequestPerConnection: ${KAFKA_PRODUCER_MAX_REQUEST_PER_CONNECTION_NOTIFICATION:5}
+      retryBackoffMs: ${KAFKA_PRODUCER_RETRY_BACKOFF_MS_NOTIFICATION:500}
+      requestTimeoutMs: ${KAFKA_PRODUCER_REQUEST_TIMEOUT_MS_NOTIFICATION:10000}
+      deliveryTimeoutMs: ${KAFKA_PRODUCER_DELIVERY_TIMEOUT_MS_NOTIFICATION:20000}
+  consumers:
+    internal:
+      groupId: ${KAFKA_CONSUMER_GROUP_ID_INTERNAL_LOG:OTTInternalLogGroup}
+      topic: ${KAFKA_CONSUMER_OTT_LOGIN:sit.ott.login}
+    properties:
+      heartbeat.interval.ms: 1000
+      max.poll.interval.ms: 600000
+      max.poll.records: 100
+
+  protocol: ${KAFKA_PROTOCOL:PLAINTEXT}

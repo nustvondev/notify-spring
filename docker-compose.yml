@@ -1,22 +1,22 @@
 # version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    environment:
-       - SPRING_PROFILES_ACTIVE=docker
-       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notification_db
-       - SPRING_DATASOURCE_USERNAME=postgres
-       - SPRING_DATASOURCE_PASSWORD=postgres
-    depends_on:
-      - postgres
-    networks:
-      - notification-network
-
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    environment:
+#       - SPRING_PROFILES_ACTIVE=docker
+#       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/notification_db
+#       - SPRING_DATASOURCE_USERNAME=postgres
+#       - SPRING_DATASOURCE_PASSWORD=postgres
+#    depends_on:
+#      - postgres
+#    networks:
+#      - notification-network
+#  Database service for the application
   postgres:
     image: postgres:16-alpine
     environment:
@@ -29,6 +29,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - notification-network
+#  Adminer service for database management
   adminer:
     image: adminer
     restart: always
@@ -38,7 +39,48 @@ services:
       - postgres
     networks:
       - notification-network
+# Kafka services for message brokering
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - notification-network
 
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 1
+    networks:
+      - notification-network
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    depends_on:
+      - kafka
+    ports:
+      - "16201:8080"
+    environment:
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - notification-network
 networks:
   notification-network:
     driver: bridge
