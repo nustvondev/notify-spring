@@ -9,11 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class NotificationTemplateDetail {
+public class CampaignCreationResult {
     private String code;
     private String title;
-    private String content;
-    private String htmlContent;
-    private String smsContent;
-    private String type;
 }

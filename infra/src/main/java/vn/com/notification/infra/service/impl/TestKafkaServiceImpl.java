@@ -16,6 +16,6 @@ public class TestKafkaServiceImpl implements TestKafkaService {
 
     @Override
     public void testKafkaProducer() {
-        kafkaEventService.publishEvent(new OTTLoginEventPayload("testUser", "testDevice"));
+        kafkaEventService.publishEvent(new OTTLoginEventPayload("OTT_LOGIN", "2"));
     }
 }

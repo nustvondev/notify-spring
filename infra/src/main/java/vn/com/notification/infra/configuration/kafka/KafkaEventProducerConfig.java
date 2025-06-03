@@ -18,6 +18,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import vn.com.notification.infra.messaging.EventType;
 import vn.com.notification.infra.messaging.KafkaEventProducer;
 import vn.com.notification.infra.messaging.eventmodel.login.PayloadEvent;
+import vn.com.notification.infra.messaging.eventmodel.ott.OTTLoginEventPayload;
 
 @Configuration
 public class KafkaEventProducerConfig {
@@ -38,11 +39,11 @@ public class KafkaEventProducerConfig {
 
     /** Create an instance supplied producer by topic. */
     @Bean(OTT_LOGIN_KAFKA_TEMPLATE)
-    public KafkaTemplate<String, PayloadEvent> ottLoginKafkaTemplate(
-            KafkaConfigurationProperties configuration, CustomSerializer customSerializer) {
+    public KafkaTemplate<String, OTTLoginEventPayload> ottLoginKafkaTemplate(
+            KafkaConfigurationProperties configuration, OTTLoginEventSerializer customSerializer) {
         String topic = configuration.getTopics().getOttMessageLogin();
-        KafkaTemplate<String, PayloadEvent> kafkaTemplate =
-                new KafkaTemplate<>(producerFactory(configuration, topic, customSerializer));
+        KafkaTemplate<String, OTTLoginEventPayload> kafkaTemplate =
+                new KafkaTemplate<>(producerNotificationFactory(configuration, topic, customSerializer));
         kafkaTemplate.setDefaultTopic(topic);
         return kafkaTemplate;
     }
@@ -98,5 +99,30 @@ public class KafkaEventProducerConfig {
                 .filter(producer -> topic.equalsIgnoreCase(producer.getTopic()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Unexpected value: %s".formatted(topic)));
+    }
+
+    private ProducerFactory<String, OTTLoginEventPayload> producerNotificationFactory(
+            KafkaConfigurationProperties configuration,
+            String topic,
+            OTTLoginEventSerializer customSerializer) {
+        KafkaConfigurationProperties.KafkaProducer producer =
+                findKafkaProducerByTopic(configuration, topic);
+        Map<String, Object> configs = new HashMap<>();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getServer());
+        configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProtocol());
+        configs.put(
+                ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, String.valueOf(producer.isEnableIdempotence()));
+        configs.put(ProducerConfig.ACKS_CONFIG, producer.getAck());
+        configs.put(ProducerConfig.RETRIES_CONFIG, String.valueOf(producer.getRetry()));
+        configs.put(
+                ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION,
+                String.valueOf(producer.getMaxInFlightRequestPerConnection()));
+        configs.put(
+                ProducerConfig.RETRY_BACKOFF_MS_CONFIG, String.valueOf(producer.getRetryBackoffMs()));
+        configs.put(
+                ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, String.valueOf(producer.getRequestTimeoutMs()));
+        configs.put(
+                ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, String.valueOf(producer.getDeliveryTimeoutMs()));
+        return new DefaultKafkaProducerFactory<>(configs, new StringSerializer(), customSerializer);
     }
 }

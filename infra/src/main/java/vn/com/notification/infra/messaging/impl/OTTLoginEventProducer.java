@@ -10,14 +10,13 @@ import org.springframework.stereotype.Service;
 import vn.com.notification.infra.messaging.EventType;
 import vn.com.notification.infra.messaging.KafkaEventProducer;
 import vn.com.notification.infra.messaging.eventmodel.login.BaseEvent;
-import vn.com.notification.infra.messaging.eventmodel.login.PayloadEvent;
 import vn.com.notification.infra.messaging.eventmodel.ott.OTTLoginEventPayload;
 
 @Service
 @RequiredArgsConstructor
 public class OTTLoginEventProducer implements KafkaEventProducer {
     @Qualifier(OTT_LOGIN_KAFKA_TEMPLATE)
-    private final KafkaTemplate<String, PayloadEvent> kafkaTemplate;
+    private final KafkaTemplate<String, OTTLoginEventPayload> kafkaTemplate;
 
     @Override
     public List<EventType> supportEventType() {

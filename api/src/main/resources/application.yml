@@ -46,6 +46,7 @@ server:
 
 application:
   migration-app-notification-enable: true
+  campaigns-app-notification-enable: true
   max-length-payload-log: 1000
 
 logging:
