@@ -7,14 +7,15 @@ import org.slf4j.MDC;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import vn.com.notification.infra.messaging.eventmodel.login.BaseEvent;
-import vn.com.notification.infra.messaging.eventmodel.login.PayloadEvent;
-import vn.com.notification.infra.messaging.eventmodel.ott.OTTLoginEventPayload;
+import vn.com.notification.infra.messaging.eventmodel.common.BaseEvent;
+import vn.com.notification.infra.messaging.eventmodel.common.PayloadEvent;
+
+// import vn.com.notification.infra.messaging.eventmodel.ott.OTTLoginEventPayload;
 
 public interface KafkaEventProducer {
     String X_REQUEST_ID = "X-Request-ID";
     String SERVICE_NAME = "Service-Name";
-    String AUTHENTICATION_SERVICE = "Authentication-Service";
+    String NOTIFICATION_SERVICE = "Notification-Service";
 
     List<EventType> supportEventType();
 
@@ -26,21 +27,21 @@ public interface KafkaEventProducer {
                 new PayloadEvent(UUID.randomUUID().toString(), eventType, Instant.now(), payload);
         var builder =
                 MessageBuilder.withPayload(baseEvent)
-                        .setHeader(SERVICE_NAME, AUTHENTICATION_SERVICE)
+                        .setHeader(SERVICE_NAME, NOTIFICATION_SERVICE)
                         .setHeader(X_REQUEST_ID, MDC.get(X_REQUEST_ID))
                         .setHeader(KafkaHeaders.KEY, payload.getKey());
 
         return builder.build();
     }
 
-    default <T extends BaseEvent> Message<OTTLoginEventPayload> mapToNotificationObject(
-            OTTLoginEventPayload payload) {
-        var uuid = UUID.randomUUID().toString();
-        var builder =
-                MessageBuilder.withPayload(payload)
-                        .setHeader(SERVICE_NAME, AUTHENTICATION_SERVICE)
-                        .setHeader(X_REQUEST_ID, uuid)
-                        .setHeader(KafkaHeaders.KEY, uuid);
-        return builder.build();
-    }
+    //    default <T extends BaseEvent> Message<OTTLoginEventPayload> mapToNotificationObject(
+    //            OTTLoginEventPayload payload) {
+    //        var uuid = UUID.randomUUID().toString();
+    //        var builder =
+    //                MessageBuilder.withPayload(payload)
+    //                        .setHeader(SERVICE_NAME, NOTIFICATION_SERVICE)
+    //                        .setHeader(X_REQUEST_ID, uuid)
+    //                        .setHeader(KafkaHeaders.KEY, uuid);
+    //        return builder.build();
+    //    }
 }

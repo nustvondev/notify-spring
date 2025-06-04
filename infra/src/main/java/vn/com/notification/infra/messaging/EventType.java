@@ -1,5 +1,6 @@
 package vn.com.notification.infra.messaging;
 
 public enum EventType {
-    OTT_LOGIN
+    OTT_LOGIN,
+    CAMPAIGN_EVENT
 }

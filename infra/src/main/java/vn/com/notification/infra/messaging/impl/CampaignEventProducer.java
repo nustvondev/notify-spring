@@ -1,6 +1,6 @@
 package vn.com.notification.infra.messaging.impl;
 
-import static vn.com.notification.infra.configuration.kafka.KafkaEventProducerConfig.OTT_LOGIN_KAFKA_TEMPLATE;
+import static vn.com.notification.infra.configuration.kafka.KafkaEventProducerConfig.CAMPING_KAFKA_TEMPLATE;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -9,22 +9,22 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import vn.com.notification.infra.messaging.EventType;
 import vn.com.notification.infra.messaging.KafkaEventProducer;
-import vn.com.notification.infra.messaging.eventmodel.login.BaseEvent;
-import vn.com.notification.infra.messaging.eventmodel.ott.OTTLoginEventPayload;
+import vn.com.notification.infra.messaging.eventmodel.common.BaseEvent;
+import vn.com.notification.infra.messaging.eventmodel.common.PayloadEvent;
 
 @Service
 @RequiredArgsConstructor
-public class OTTLoginEventProducer implements KafkaEventProducer {
-    @Qualifier(OTT_LOGIN_KAFKA_TEMPLATE)
-    private final KafkaTemplate<String, OTTLoginEventPayload> kafkaTemplate;
+public class CampaignEventProducer implements KafkaEventProducer {
+    @Qualifier(CAMPING_KAFKA_TEMPLATE)
+    private final KafkaTemplate<String, PayloadEvent> kafkaTemplate;
 
     @Override
     public List<EventType> supportEventType() {
-        return List.of(EventType.OTT_LOGIN);
+        return List.of(EventType.CAMPAIGN_EVENT);
     }
 
     @Override
     public <T extends BaseEvent> void publishEvent(T event, EventType eventType) {
-        kafkaTemplate.send(mapToNotificationObject((OTTLoginEventPayload) event));
+        kafkaTemplate.send(mapToEventObject(event, eventType));
     }
 }

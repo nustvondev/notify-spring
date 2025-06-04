@@ -6,7 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import vn.com.notification.infra.messaging.eventmodel.login.BaseEvent;
+import vn.com.notification.infra.messaging.eventmodel.common.BaseEvent;
 
 @Service
 @RequiredArgsConstructor

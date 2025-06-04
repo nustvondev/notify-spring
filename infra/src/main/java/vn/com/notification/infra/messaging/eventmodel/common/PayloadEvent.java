@@ -1,4 +1,4 @@
-package vn.com.notification.infra.messaging.eventmodel.login;
+package vn.com.notification.infra.messaging.eventmodel.common;
 
 import java.time.Instant;
 import vn.com.notification.infra.messaging.EventType;

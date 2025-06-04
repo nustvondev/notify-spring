@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -17,12 +18,11 @@ import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import vn.com.notification.infra.messaging.EventType;
 import vn.com.notification.infra.messaging.KafkaEventProducer;
-import vn.com.notification.infra.messaging.eventmodel.login.PayloadEvent;
-import vn.com.notification.infra.messaging.eventmodel.ott.OTTLoginEventPayload;
+import vn.com.notification.infra.messaging.eventmodel.common.PayloadEvent;
 
 @Configuration
 public class KafkaEventProducerConfig {
-    public static final String OTT_LOGIN_KAFKA_TEMPLATE = "ott-login-template";
+    public static final String CAMPING_KAFKA_TEMPLATE = "campaign-kafka-template";
 
     @Bean
     Map<EventType, KafkaEventProducer> provideKafkaEventProducer(
@@ -37,13 +37,16 @@ public class KafkaEventProducerConfig {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    /** Create an instance supplied producer by topic. */
-    @Bean(OTT_LOGIN_KAFKA_TEMPLATE)
-    public KafkaTemplate<String, OTTLoginEventPayload> ottLoginKafkaTemplate(
-            KafkaConfigurationProperties configuration, OTTLoginEventSerializer customSerializer) {
+    /**
+     * Create an instance supplied producer by topic.
+     */
+
+    @Bean(CAMPING_KAFKA_TEMPLATE)
+    public KafkaTemplate<String, PayloadEvent> campaignKafkaTemplate(
+            KafkaConfigurationProperties configuration, CustomSerializer customSerializer) {
         String topic = configuration.getTopics().getOttMessageLogin();
-        KafkaTemplate<String, OTTLoginEventPayload> kafkaTemplate =
-                new KafkaTemplate<>(producerNotificationFactory(configuration, topic, customSerializer));
+        KafkaTemplate<String, PayloadEvent> kafkaTemplate =
+                new KafkaTemplate<>(producerFactory(configuration, topic, customSerializer));
         kafkaTemplate.setDefaultTopic(topic);
         return kafkaTemplate;
     }
@@ -101,28 +104,5 @@ public class KafkaEventProducerConfig {
                 .orElseThrow(() -> new IllegalStateException("Unexpected value: %s".formatted(topic)));
     }
 
-    private ProducerFactory<String, OTTLoginEventPayload> producerNotificationFactory(
-            KafkaConfigurationProperties configuration,
-            String topic,
-            OTTLoginEventSerializer customSerializer) {
-        KafkaConfigurationProperties.KafkaProducer producer =
-                findKafkaProducerByTopic(configuration, topic);
-        Map<String, Object> configs = new HashMap<>();
-        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, configuration.getServer());
-        configs.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, configuration.getProtocol());
-        configs.put(
-                ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, String.valueOf(producer.isEnableIdempotence()));
-        configs.put(ProducerConfig.ACKS_CONFIG, producer.getAck());
-        configs.put(ProducerConfig.RETRIES_CONFIG, String.valueOf(producer.getRetry()));
-        configs.put(
-                ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION,
-                String.valueOf(producer.getMaxInFlightRequestPerConnection()));
-        configs.put(
-                ProducerConfig.RETRY_BACKOFF_MS_CONFIG, String.valueOf(producer.getRetryBackoffMs()));
-        configs.put(
-                ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, String.valueOf(producer.getRequestTimeoutMs()));
-        configs.put(
-                ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, String.valueOf(producer.getDeliveryTimeoutMs()));
-        return new DefaultKafkaProducerFactory<>(configs, new StringSerializer(), customSerializer);
-    }
+
 }

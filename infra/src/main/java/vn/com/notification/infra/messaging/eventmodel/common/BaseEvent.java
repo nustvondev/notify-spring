@@ -1,4 +1,4 @@
-package vn.com.notification.infra.messaging.eventmodel.login;
+package vn.com.notification.infra.messaging.eventmodel.common;
 
 import vn.com.notification.infra.messaging.EventType;
 

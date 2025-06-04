@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Serializer;
 import org.springframework.stereotype.Component;
-import vn.com.notification.infra.messaging.eventmodel.login.PayloadEvent;
+import vn.com.notification.infra.messaging.eventmodel.common.PayloadEvent;
 
 @Component
 @RequiredArgsConstructor

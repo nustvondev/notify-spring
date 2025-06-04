@@ -2,10 +2,9 @@ package vn.com.notification.infra.messaging.eventmodel.ott;
 
 import static vn.com.notification.infra.messaging.KafkaEventProducer.X_REQUEST_ID;
 
-import lombok.*;
 import org.slf4j.MDC;
 import vn.com.notification.infra.messaging.EventType;
-import vn.com.notification.infra.messaging.eventmodel.login.BaseEvent;
+import vn.com.notification.infra.messaging.eventmodel.common.BaseEvent;
 
 public record OTTLoginEventPayload(String eventType, String language
         //        Map<String, String> data,
