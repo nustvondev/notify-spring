@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -37,10 +36,7 @@ public class KafkaEventProducerConfig {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    /**
-     * Create an instance supplied producer by topic.
-     */
-
+    /** Create an instance supplied producer by topic. */
     @Bean(CAMPING_KAFKA_TEMPLATE)
     public KafkaTemplate<String, PayloadEvent> campaignKafkaTemplate(
             KafkaConfigurationProperties configuration, CustomSerializer customSerializer) {
@@ -103,6 +99,4 @@ public class KafkaEventProducerConfig {
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("Unexpected value: %s".formatted(topic)));
     }
-
-
 }
