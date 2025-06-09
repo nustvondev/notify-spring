@@ -11,18 +11,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import vn.com.notification.core.dto.params.CampaignCreationParams;
+import vn.com.notification.core.dto.params.NotificationParams;
 import vn.com.notification.core.dto.result.CampaignCreationResult;
 import vn.com.notification.core.service.CampaignsService;
 import vn.com.notification.infra.messaging.KafkaEventService;
 import vn.com.notification.infra.messaging.eventmodel.ott.CampaignEventPayload;
+import vn.com.notification.infra.repository.dao.NotificationRepository;
 import vn.com.notification.infra.repository.dao.NotificationTemplateRepository;
-import vn.com.notification.infra.repository.entity.NotificationTemplateEntity;
+import vn.com.notification.infra.repository.dao.entity.NotificationEntity;
+import vn.com.notification.infra.repository.dao.entity.NotificationTemplateEntity;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class CampaignsServiceImpl implements CampaignsService {
     private final NotificationTemplateRepository notificationTemplateRepository;
+    private final NotificationRepository notificationRepository;
     private final KafkaEventService kafkaEventService;
 
     @Override
@@ -57,6 +61,29 @@ public class CampaignsServiceImpl implements CampaignsService {
         return template
                 .map(entity -> new CampaignCreationResult(entity.getCode(), entity.getContent()))
                 .orElseGet(() -> new CampaignCreationResult("false", "Notification template not found"));
+    }
+
+    @Override
+    public void createNotificationCampaign(NotificationParams params) {
+        try {
+
+            NotificationEntity notification = new NotificationEntity();
+            notification.setUserId(params.getUserId());
+            notification.setTemplateId(params.getCode());
+            notification.setTitle(params.getContent());
+            notification.setContent(params.getContent());
+            notification.setHtmlContent(params.getContentHtml());
+            notification.setSmsContent(params.getSmsContent());
+            notification.setRead(false);
+            notification.setMeta(params.getMeta());
+
+            // Save the notification entity
+            notificationRepository.save(notification);
+            log.info("Notification campaign created successfully for userId: {}", params.getUserId());
+        } catch (Exception e) {
+            log.error("Failed to create notification campaign", e);
+            throw new RuntimeException("Failed to create notification campaign", e);
+        }
     }
 
     public List<String> generateRandomUserIds(int count) {

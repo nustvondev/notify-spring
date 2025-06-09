@@ -1,4 +1,4 @@
-package vn.com.notification.infra.repository.entity;
+package vn.com.notification.infra.repository.dao.entity;
 
 import jakarta.persistence.*;
 import java.time.ZonedDateTime;

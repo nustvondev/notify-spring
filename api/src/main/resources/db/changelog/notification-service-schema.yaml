@@ -60,12 +60,12 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: user_id
-                  type: BIGINT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:
                   name: template_id
-                  type: BIGINT
+                  type: VARCHAR(255)
                   constraints:
                     nullable: false
               - column:

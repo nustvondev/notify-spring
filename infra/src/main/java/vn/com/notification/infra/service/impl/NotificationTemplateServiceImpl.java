@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import vn.com.notification.core.configuration.NotificationProperties;
 import vn.com.notification.core.service.NotificationTemplateService;
 import vn.com.notification.infra.repository.dao.NotificationTemplateRepository;
-import vn.com.notification.infra.repository.entity.NotificationTemplateEntity;
+import vn.com.notification.infra.repository.dao.entity.NotificationTemplateEntity;
 
 @Service
 // @RequiredArgsConstructor
